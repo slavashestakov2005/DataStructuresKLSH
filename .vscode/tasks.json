@@ -1,0 +1,31 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build C++ project",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "cwd": "c:/Users/slava/Documents/Projects/Cpp/DataStructuresKLSH",
+            "command": "g++", 
+            "args": [
+                "-g", "-Wall", "main.cpp", "examples/frac.cpp", "linear/vector.cpp", "-o", "build/main"
+            ]
+        },
+        {
+            "label": "Build & run C++ project",
+            "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "cwd": "c:/Users/slava/Documents/Projects/Cpp/DataStructuresKLSH",
+            "command": "g++", 
+            "args": [
+                "-g", "-Wall", "main.cpp", "examples/frac.cpp", "linear/vector.cpp", "-o", "build/main"
+            ]
+        }
+    ]
+}
