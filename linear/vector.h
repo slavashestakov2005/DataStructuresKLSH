@@ -4,38 +4,43 @@
 #include <ostream>
 
 namespace own::ds::linear {
+    template<typename T>
     class Vector {
     private:
-        int* data;
+        T* data;
         size_t cur_size, cur_capacity;
     public:
         explicit Vector(size_t size = 0);
-        Vector(Vector const& v);
-        Vector& operator=(Vector const& v);
-        void copy(Vector const& v);
-        void swap(Vector& v);
+        Vector(Vector<T> const& v);
+        Vector<T>& operator=(Vector<T> const& v);
+        void copy(Vector<T> const& v);
+        void swap(Vector<T>& v);
 
         size_t size() const;
         size_t capacity() const;
 
-        void push_back(int value);
-        int get_back() const;
+        void push_back(T value);
+        T get_back() const;
         void pop_back();
 
-        int& operator[](int pos);
-        int const& operator[](int pos) const;
+        T& operator[](T pos);
+        T const& operator[](T pos) const;
 
-        using iterator = int*;
-        using const_iterator = const int*;
+        using iterator = T*;
+        using const_iterator = const T*;
         iterator begin();
         iterator end();
         const_iterator begin() const;
         const_iterator end() const;
 
-        std::strong_ordering operator<=>(Vector const& other) const;
-        bool operator==(Vector const& other) const;
+        std::strong_ordering operator<=>(Vector<T> const& other) const;
+        bool operator==(Vector<T> const& other) const;
 
         ~Vector();
     };
-    std::ostream& operator<<(std::ostream& os, Vector const& v);
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& os, Vector<T> const& v);
 }
+
+#include "vector.tpp"

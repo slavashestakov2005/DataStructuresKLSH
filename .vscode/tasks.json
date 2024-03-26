@@ -11,7 +11,7 @@
             "cwd": "c:/Users/slava/Documents/Projects/Cpp/DataStructuresKLSH",
             "command": "g++", 
             "args": [
-                "-g", "-Wall", "-std=c++20", "main.cpp", "examples/frac.cpp", "linear/vector.cpp", "-o", "build/main"
+                "-g", "-Wall", "-std=c++20", "main.cpp", "examples/frac.cpp", "-o", "build/main"
             ]
         },
         {
@@ -24,7 +24,7 @@
             "cwd": "c:/Users/slava/Documents/Projects/Cpp/DataStructuresKLSH",
             "command": "g++", 
             "args": [
-                "-g", "-Wall", "-std=c++20", "main.cpp", "examples/frac.cpp", "linear/vector.cpp", "-o", "build/main"
+                "-g", "-Wall", "-std=c++20", "main.cpp", "examples/frac.cpp", "-o", "build/main"
             ]
         }
     ]

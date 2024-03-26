@@ -1,48 +1,54 @@
 #include "vector.h"
-#include <iostream>
 using own::ds::linear::Vector;
 
-Vector::Vector(size_t size) {
-    std::cout << "Call " << size << "\n";
-    data = new int[size];
+template<typename T>
+Vector<T>::Vector(size_t size) {
+    data = new T[size];
     cur_size = 0;
     cur_capacity = size;
 }
 
-Vector::Vector(Vector const& v) {
+template<typename T>
+Vector<T>::Vector(Vector<T> const& v) {
     copy(v); 
 }
 
-Vector& Vector::operator=(Vector const& v) {
+template<typename T>
+Vector<T>& Vector<T>::operator=(Vector<T> const& v) {
     if (this == &v) return *this; 
-    copy(v);    // или Vector(v).swap(*this);
+    copy(v);    // или Vector<T>(v).swap(*this);
     return *this;
 }
 
-void Vector::copy(Vector const& v) {
+template<typename T>
+void Vector<T>::copy(Vector<T> const& v) {
     cur_size = cur_capacity = v.cur_size;
-    data = new int[cur_capacity];
+    data = new T[cur_capacity];
     for (size_t copy_pos = 0; copy_pos < cur_capacity; ++copy_pos) data[copy_pos] = v.data[copy_pos];
 }
 
-void Vector::swap(Vector& v) {
+template<typename T>
+void Vector<T>::swap(Vector<T>& v) {
     std::swap(data, v.data);
     std::swap(cur_size, v.cur_size);
     std::swap(cur_capacity, v.cur_capacity);
 }
 
-size_t Vector::size() const {
+template<typename T>
+size_t Vector<T>::size() const {
     return cur_size;
 }
 
-size_t Vector::capacity() const {
+template<typename T>
+size_t Vector<T>::capacity() const {
     return cur_capacity; 
 }
 
-void Vector::push_back(int value) {
+template<typename T>
+void Vector<T>::push_back(T value) {
     if (cur_size == cur_capacity) {
         size_t new_capacity = cur_capacity * 2 + 1;
-        int* new_data = new int[new_capacity];
+        T* new_data = new T[new_capacity];
         for (size_t copy_pos = 0; copy_pos < cur_capacity; ++copy_pos) new_data[copy_pos] = data[copy_pos];
         delete[] data;
         cur_capacity = new_capacity;
@@ -52,17 +58,19 @@ void Vector::push_back(int value) {
     ++cur_size;
 }
 
-int Vector::get_back() const {
+template<typename T>
+T Vector<T>::get_back() const {
     if (cur_size == 0) return -1;
     return data[cur_size - 1];
 }
 
-void Vector::pop_back() {
+template<typename T>
+void Vector<T>::pop_back() {
     if (cur_size == 0) return;
     --cur_size;
     if (cur_size * 4 < cur_capacity) {
         size_t new_capacity = cur_size * 2;
-        int* new_data = new int[new_capacity];
+        T* new_data = new T[new_capacity];
         for (size_t copy_pos = 0; copy_pos < cur_size; ++copy_pos) new_data[copy_pos] = data[copy_pos];
         delete [] data;
         cur_capacity = new_capacity;
@@ -70,47 +78,57 @@ void Vector::pop_back() {
     }
 }
 
-int& Vector::operator[](int pos) {
+template<typename T>
+T& Vector<T>::operator[](T pos) {
     return data[pos];
 }
 
-int const& Vector::operator[](int pos) const {
+template<typename T>
+T const& Vector<T>::operator[](T pos) const {
     return data[pos];
 }
 
-Vector::iterator Vector::begin() {
+template<typename T>
+Vector<T>::iterator Vector<T>::begin() {
     return data;
 }
 
-Vector::iterator Vector::end() {
+template<typename T>
+Vector<T>::iterator Vector<T>::end() {
     return data + cur_size;
 }
 
-Vector::const_iterator Vector::begin() const {
+template<typename T>
+Vector<T>::const_iterator Vector<T>::begin() const {
     return data;
 }
 
-Vector::const_iterator Vector::end() const {
+template<typename T>
+Vector<T>::const_iterator Vector<T>::end() const {
     return data + cur_size;
 }
 
-std::strong_ordering Vector::operator<=>(Vector const& other) const {
+template<typename T>
+std::strong_ordering Vector<T>::operator<=>(Vector<T> const& other) const {
     if (cur_size != other.cur_size) return cur_size <=> other.cur_size;
     for (size_t pos = 0; pos < cur_size; ++pos) if (data[pos] != other.data[pos]) return data[pos] <=> other.data[pos];
     return std::strong_ordering::equal;
 }
 
-bool Vector::operator==(Vector const& other) const {
+template<typename T>
+bool Vector<T>::operator==(Vector<T> const& other) const {
     return (*this <=> other) == std::strong_ordering::equal;
 }
 
-Vector::~Vector() {
+template<typename T>
+Vector<T>::~Vector() {
     delete[] data;
 }
 
 namespace own::ds::linear {
-    std::ostream& operator<<(std::ostream& os, Vector const& v) {
-        for (int cur_value: v) os << cur_value << " ";
+    template<typename T>
+    std::ostream& operator<<(std::ostream& os, Vector<T> const& v) {
+        for (T cur_value: v) os << cur_value << " ";
         os << std::endl;
         return os;
     }
