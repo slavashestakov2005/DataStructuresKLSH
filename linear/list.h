@@ -78,8 +78,11 @@ namespace own::ds::linear {
         using iterator_category = std::bidirectional_iterator_tag;
         ListIterator(ListItem<T> *it = nullptr);
         T& operator*();
+        T const& operator*() const;
         ListIterator<T> operator++();
+        ListIterator<T> const operator++() const;
         ListIterator<T> operator--();
+        ListIterator<T> const operator--() const;
         bool operator==(ListIterator<T> const& other) const;
         friend class List<T>;
     };

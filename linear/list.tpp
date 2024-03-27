@@ -118,15 +118,30 @@ T& ListIterator<T>::operator*() {
 }
 
 template<typename T>
+T const& ListIterator<T>::operator*() const {
+    return it -> value;
+}
+
+template<typename T>
 ListIterator<T> ListIterator<T>::operator++() {
     it = it -> next;
     return *this;
 }
 
 template<typename T>
+ListIterator<T> const ListIterator<T>::operator++() const {
+    return ListIterator<T>(it -> next);
+}
+
+template<typename T>
 ListIterator<T> ListIterator<T>::operator--() {
     it = it -> prev;
     return *this;
+}
+
+template<typename T>
+ListIterator<T> const ListIterator<T>::operator--() const {
+    return ListIterator<T>(it -> prev);
 }
 
 template<typename T>
@@ -224,6 +239,11 @@ void List<T>::pop_front() {
     if (cur_size == 0) return;
     ListItem<T> *new_first = first.it -> next;
     delete first.it;
+    if (cur_size == 1) {
+        first = last = after_end = ListIterator<T>(nullptr);
+        --cur_size;
+        return;
+    }
     first = ListIterator<T>(new_first);
     --cur_size;
 }
@@ -233,7 +253,14 @@ void List<T>::pop_back() {
     if (cur_size == 0) return;
     ListItem<T> *new_last = last.it -> prev;
     delete last.it;
+    if (cur_size == 1) {
+        first = last = after_end = ListIterator<T>(nullptr);
+        --cur_size;
+        return;
+    }
     last = ListIterator<T>(new_last);
+    after_end = ListIterator<T>(new ListItem<T>(0, last.it, nullptr));
+    last.it -> next = after_end.it;
     --cur_size;
 }
 
@@ -244,11 +271,6 @@ List<T>::iterator List<T>::begin() {
 
 template<typename T>
 List<T>::iterator List<T>::end() {
-    // if (cur_size == 0) return last;
-    // if (after_end.it -> prev != last.it) {
-    //     after_end = ListIterator<T>(new ListItem<T>(0, last.it, nullptr));
-    //     last.it -> next = after_end.it;
-    // }
     return after_end;
 }
 
@@ -267,12 +289,7 @@ List<T>::const_iterator List<T>::end() const {
 namespace own::ds::linear {
     template<typename T>
     std::ostream& operator<<(std::ostream& os, List<T> const& lst) {
-        auto it = lst.begin();
-        for(size_t i = 0; i < lst.size(); ++i) {
-            os << *it << " ";
-            ++it;
-        }
-        // for (T cur_value: lst) os << cur_value << " ";
+        for (T cur_value: lst) os << cur_value << " ";
         os << std::endl;
         return os;
     }
