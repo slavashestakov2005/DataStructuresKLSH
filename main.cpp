@@ -5,7 +5,7 @@
 #include "linear/queue.h"
 #include "linear/list.h"
 #include "linear/deque.h"
-#include "tree/tree.h"
+#include "tree/rbst.h"
 
 using namespace std;
 using namespace own::examples;
@@ -146,24 +146,46 @@ int main() {
     ds.pop_back();
     cout << ds.front() << " " << ds.back() << "\n";
 
+    BinarySearchTree<int, int> bt;
+
     cout << "\nBinary Search Tree\n";
-    BinarySearchTree<int> b0(0);
-    BinarySearchTree<int> b1(1);
-    BinarySearchTree<int> b2(2);
-    BinarySearchTree<int> b3(3);
-    BinarySearchTree<int> b4(4);
-    BinarySearchTree<int> b5(5);
-    b4.right = &b5;
-    b4.left = &b1;
-    b1.left = &b0;
-    b1.right = &b3;
-    b3.left = &b2;
-    b3.cur_size = 2;
-    b1.cur_size = 4;
-    b4.cur_size = 6;
-    cout << (b4.find(3) == &b3) << endl;
-    cout << (b4.find(-1) == nullptr) << endl;
-    cout << (b4.find(5) == &b5) << endl;
-    cout << (b4.find(4) == &b4) << endl;
+    RandomBinarySearchTree<int> *rbst = nullptr;
+    rbst -> print(); cout << "\n";
+    rbst = rbst -> insert(1);
+    rbst -> print(); cout << "\n";
+    rbst = rbst -> insert(2);
+    rbst -> print(); cout << "\n";
+    rbst = rbst -> insert(3);
+    rbst -> print(); cout << "\n";
+    rbst = rbst -> insert(4);
+    rbst -> print(); cout << "\n";
+    rbst = rbst -> insert(5);
+    rbst -> print(); cout << "\n";
+
+    {
+        auto [a, b] = rbst -> find(100);
+        rbst = b;
+        cout << a << "\n";
+        rbst -> print();
+        cout << "\n";
+    }{
+        auto [a, b] = rbst -> find(1);
+        rbst = b;
+        cout << a << "\n";
+        rbst -> print();
+        cout << "\n";
+    }{
+        auto [a, b] = rbst -> find(4);
+        rbst = b;
+        cout << a << "\n";
+        rbst -> print();
+        cout << "\n";
+    }{
+        auto [a, b] = rbst -> find(3);
+        rbst = b;
+        cout << a << "\n";
+        rbst -> print();
+        cout << "\n";
+    }
     return 0;
 }
