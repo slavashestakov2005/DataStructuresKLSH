@@ -6,11 +6,57 @@
 #include "linear/list.h"
 #include "linear/deque.h"
 #include "tree/rbst.h"
+#include "tree/treap.h"
+#include "tree/treap_implicit_key.h"
 
 using namespace std;
 using namespace own::examples;
 using namespace own::ds::linear;
 using namespace own::ds::tree;
+
+template<typename T>
+void test_tree_data_structure(std::string const& name) {
+    cout << "\n" << name << "\n";
+    T *tree_ds = nullptr;
+    tree_ds -> print(); cout << "\n";
+    tree_ds = tree_ds -> insert(1);
+    tree_ds -> print(); cout << "\n";
+    tree_ds = tree_ds -> insert(2);
+    tree_ds -> print(); cout << "\n";
+    tree_ds = tree_ds -> insert(3);
+    tree_ds -> print(); cout << "\n";
+    tree_ds = tree_ds -> insert(4);
+    tree_ds -> print(); cout << "\n";
+    tree_ds = tree_ds -> insert(5);
+    tree_ds -> print(); cout << "\n";
+
+    {
+        auto [a, b] = tree_ds -> find(100);
+        tree_ds = b;
+        cout << a << "\n";
+        tree_ds -> print();
+        cout << "\n";
+    }{
+        auto [a, b] = tree_ds -> find(1);
+        tree_ds = b;
+        cout << a << "\n";
+        tree_ds -> print();
+        cout << "\n";
+    }{
+        auto [a, b] = tree_ds -> find(4);
+        tree_ds = b;
+        cout << a << "\n";
+        tree_ds -> print();
+        cout << "\n";
+    }{
+        auto [a, b] = tree_ds -> find(3);
+        tree_ds = b;
+        cout << a << "\n";
+        tree_ds -> print();
+        cout << "\n";
+    }
+}
+
 
 int main() {
     Vector<int> v1;
@@ -146,46 +192,58 @@ int main() {
     ds.pop_back();
     cout << ds.front() << " " << ds.back() << "\n";
 
-    BinarySearchTree<int, int> bt;
+    // BinarySearchTree<int, int> bt;
 
-    cout << "\nBinary Search Tree\n";
-    RandomBinarySearchTree<int> *rbst = nullptr;
-    rbst -> print(); cout << "\n";
-    rbst = rbst -> insert(1);
-    rbst -> print(); cout << "\n";
-    rbst = rbst -> insert(2);
-    rbst -> print(); cout << "\n";
-    rbst = rbst -> insert(3);
-    rbst -> print(); cout << "\n";
-    rbst = rbst -> insert(4);
-    rbst -> print(); cout << "\n";
-    rbst = rbst -> insert(5);
-    rbst -> print(); cout << "\n";
+    test_tree_data_structure<RandomBinarySearchTree<int>>("Binary Search Tree");
+    test_tree_data_structure<Treap<int>>("Treap");
 
+    cout << "\nTreapImplicitKey\n";
+    TreapImplicitKey<char> *trik = nullptr;
+    trik = trik -> insert(0, 'H');
+    trik -> print(); cout << "\n";
+    trik = trik -> insert(1, 'l');
+    trik -> print(); cout << "\n";
+    trik = trik -> insert(1, 'e');
+    trik -> print(); cout << "\n";
+    trik = trik -> insert(3, 'l');
+    trik -> print(); cout << "\n";
+    trik = trik -> insert(3, 'l');
+    trik -> print(); cout << "\n";
+    trik = trik -> insert(5, 'o');
+    trik -> print(); cout << "\n";
+    trik = trik -> erase(4);
+    trik -> print(); cout << "\n";
+
+    TreapImplicitKey<int> *trik2 = nullptr;
+    trik2 = trik2 -> insert(0, 5);
+    trik2 -> print(); cout << "\n";
+    trik2 = trik2 -> insert(1, 7);
+    trik2 -> print(); cout << "\n";
+    trik2 = trik2 -> insert(1, 3);
+    trik2 -> print(); cout << "\n";
+    trik2 = trik2 -> insert(3, 9);
+    trik2 -> print(); cout << "\n";
+    trik2 = trik2 -> insert(3, 1);
+    trik2 -> print(); cout << "\n";
+    trik2 = trik2 -> insert(5, 4);
+    trik2 -> print(); cout << "\n";
     {
-        auto [a, b] = rbst -> find(100);
-        rbst = b;
-        cout << a << "\n";
-        rbst -> print();
-        cout << "\n";
-    }{
-        auto [a, b] = rbst -> find(1);
-        rbst = b;
-        cout << a << "\n";
-        rbst -> print();
-        cout << "\n";
-    }{
-        auto [a, b] = rbst -> find(4);
-        rbst = b;
-        cout << a << "\n";
-        rbst -> print();
-        cout << "\n";
-    }{
-        auto [a, b] = rbst -> find(3);
-        rbst = b;
-        cout << a << "\n";
-        rbst -> print();
-        cout << "\n";
+        auto z = trik2 -> sum_segment(2, 3);
+        trik2 = z.second;
+        cout << z.first << "\n";
     }
+    trik2 -> print(); cout << "\n";
+    {
+        auto z = trik2 -> sum_segment(4, 4);
+        trik2 = z.second;
+        cout << z.first << "\n";
+    }
+    trik2 -> print(); cout << "\n";
+    {
+        auto z = trik2 -> sum_segment(0, 5);
+        trik2 = z.second;
+        cout << z.first << "\n";
+    }
+    trik2 -> print(); cout << "\n";
     return 0;
 }
