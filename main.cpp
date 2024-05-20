@@ -8,6 +8,7 @@
 #include "tree/rbst.h"
 #include "tree/treap.h"
 #include "tree/treap_implicit_key.h"
+#include "tree/splay.h"
 
 using namespace std;
 using namespace own::examples;
@@ -245,5 +246,22 @@ int main() {
         cout << z.first << "\n";
     }
     trik2 -> print(); cout << "\n";
+
+    cout << "\nSplay Tree\n";
+    Splay<int> st;
+    st.insert(1);
+    st.print(); cout << "\n";
+    st.insert(8);
+    st.print(); cout << "\n";
+    st.insert(3);
+    st.print(); cout << "\n";
+    st.insert(5);
+    st.print(); cout << "\n";
+    st.insert(2);
+    st.print(); cout << "\n";
+    st.insert(1);
+    st.print(); cout << "\n";
+    st.erase(5);
+    st.print(); cout << "\n";
     return 0;
 }
