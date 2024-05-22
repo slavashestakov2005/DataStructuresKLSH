@@ -9,11 +9,13 @@
 #include "tree/treap.h"
 #include "tree/treap_implicit_key.h"
 #include "tree/splay.h"
+#include "utils/pair.h"
 
 using namespace std;
 using namespace own::examples;
 using namespace own::ds::linear;
 using namespace own::ds::tree;
+using namespace own::ds::utils;
 
 template<typename T>
 void test_tree_data_structure(std::string const& name) {
@@ -263,5 +265,11 @@ int main() {
     st.print(); cout << "\n";
     st.erase(5);
     st.print(); cout << "\n";
+
+    cout << "\nPair\n";
+    Pair<int, string> pis1, pis2(1, "one"), pis3{2, "two"};
+    cout << pis1.first << " " << pis1.second << "\n";
+    cout << pis2.first << " " << pis2.second << "\n";
+    cout << pis3.first << " " << pis3.second << "\n";
     return 0;
 }
