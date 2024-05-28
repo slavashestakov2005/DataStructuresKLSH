@@ -1,0 +1,146 @@
+\coursefooterdate{?.06.2024}\head{\Large Урок 8: Rbst, больше наследования.}
+\label{md2tex8}
+\hyperref[md2texREADME]{К главному описанию}
+
+
+\subhead{Краткий план}
+\begin{enumerate}
+    \item Split и Merge.
+    \item Рандомизированное бинарное дерево поиск (rbst).
+    \item Как написать rbst аккуратно.
+    \item Виртуальные методы.
+    \item Приведение типов.
+    \item Неопределённое поведение.
+\end{enumerate}
+
+
+\subhead{Мотивация}
+Настала пора уменьшить глубину наших деревьев поиска, для этого попробуем использовать рандом. Сразу заметим, что глубина любого дерева поиска будет хотя бы логарифм, а значит наша цель - достичь именно его.
+
+
+\subhead{Split и Merge}
+Сегодняшние структуры будут выражаться через две простых операции: \mintinline{cpp}{Split} и \mintinline{cpp}{Merge}. Первая разделяем бинарное дерево поиска по переданному ключа на два дерева поиска (в первом все элементы меньшие, а во втором - больше либо равные). А вторая операция склеивает два бинарных дерева поиска при условии, что ключи одного меньше чем ключи другого.
+
+Через эти две операции можно выразить остальные:
+\begin{itemize}
+    \item \mintinline{cpp}{find x}: сделаем \mintinline{cpp}{Split} сначала по \mintinline{cpp}{x}, а потом у правой части по \mintinline{cpp}{x + 1} (если тип не поддерживает операцию \mintinline{cpp}{+1}, то придётся определять несколько разных \mintinline{cpp}{Split}). Итого получили три разных куска, средний из них отвечает за \mintinline{cpp}{x}: если он \mintinline{cpp}{nullptr} то таких элементов не было, а иначе - были.
+    \item \mintinline{cpp}{insert x}: делаем такие же \mintinline{cpp}{Split} как и в операции \mintinline{cpp}{find} и потом делаем \mintinline{cpp}{Merge} всех частей в порядке \mintinline{cpp}{<x, x, >x}.
+    \item \mintinline{cpp}{erase x}: делаем такие же \mintinline{cpp}{Split} как и в \mintinline{cpp}{find}, а оставляем только результат \mintinline{cpp}{Merge} от \mintinline{cpp}{<x} и \mintinline{cpp}{>x}.
+\end{itemize}
+
+Обе операции, \mintinline{cpp}{Split} и \mintinline{cpp}{Merge} можно реализовать рекурсивно. Также заметим, что операции \mintinline{cpp}{Split} по сути занимается тем же самым, чем раньше занимался \mintinline{cpp}{find}, следовательно \mintinline{cpp}{Split} можно написать общий для всех деревьев поиска, а менять \mintinline{cpp}{Merge} - в нашем случае на какое-то использование рандома.
+
+
+\subhead{Рандомизированное бинарное дерево поиска}
+В каждой вершине мы будем подсчитывать размер её поддерева. И при операции \mintinline{cpp}{Merge(L, R)} корнем будет становиться корень \mintinline{cpp}{L} с вероятностью $\frac{|L|}{|L| + |R|}$, а \mintinline{cpp}{R} будет корнем с вероятностью $\frac{|R|}{|L| + |R|}$. Можно показать, что тогда итоговая глубина получится логарифмическая, то есть оптимальная.
+
+
+\subhead{Как это написать}
+Во-первых начнём с безжалостных изменений в интерфейсе для бинарного дерева поиск, теперь он превратится в:
+\begin{minted}{cpp}
+template<typename Child> using bst_t = Child;
+template<typename Child> using bst_ptr_t = Child*;          // псевдонимы типов для более понятной записи
+
+template<typename T, typename Child>                        // T - тип значений, Child - тип дерева поиска
+class BinarySearchTree {
+private:
+    void update_info();                                     // вызываем при изменении вершина,
+                                                            // она вызывает Child::update
+protected:
+    T value;
+    bst_ptr_t<Child> left, right;
+    virtual void update() = 0;                              // объявление функции для дочерних классов
+public:
+    BinarySearchTree();
+    BinarySearchTree(T value);
+    BinarySearchTree(T value, bst_ptr_t<Child> l, bst_ptr_t<Child> r);      // конструкторы
+
+    std::pair<bst_ptr_t<Child>, bst_ptr_t<Child>> split_lt_geq(T key);      // разделить на: < x  | >= x
+    std::pair<bst_ptr_t<Child>, bst_ptr_t<Child>> split_leq_gt(T key);      // разделить на: <= x | > x
+
+    bst_ptr_t<Child> insert(T value);                 // добавление, используем как rbst = rbst -> insert(3)
+    std::pair<bool, bst_ptr_t<Child>> find(T value);  // поиск, используем как rbst = rbst -> insert(3)
+    bst_ptr_t<Child> erase(T value);                  // удаление, используем как rbst = rbst -> erase(3)
+
+    virtual ~BinarySearchTree();                      // в деструкторе нужно удалить детей
+    void print();                                     // печать, пока не сделали итераторы
+};
+\end{minted}
+
+А для rbst объявление будет таким:
+\begin{minted}{cpp}
+template<typename T> class RandomBinarySearchTree;
+template<typename T> using rbst_t = bst_t<RandomBinarySearchTree<T>>;
+template<typename T> using rbst_ptr_t = bst_ptr_t<RandomBinarySearchTree<T>>;
+// псевдонимы типов для более понятной записи
+
+template<typename T>                                                        // T - тип значений
+class RandomBinarySearchTree : public BinarySearchTree<T, RandomBinarySearchTree<T>> {
+private:
+    static size_t get_size(rbst_ptr_t<T> t);                                // получить размер
+    static rbst_ptr_t<T> merge(rbst_ptr_t<T> l, rbst_ptr_t<T> r);           // объединение
+    size_t cur_size;
+    void update() override;                                                 // обновить размер
+public:
+    RandomBinarySearchTree();
+    RandomBinarySearchTree(T value);
+    RandomBinarySearchTree(T value, rbst_ptr_t<T> left, rbst_ptr_t<T> right);
+
+    friend BinarySearchTree<T, RandomBinarySearchTree<T>>;                  // чтобы мог вызвать update
+};
+\end{minted}
+
+С реализацией всё должно быть примерно понятно, достаточно написать по описанию структуры. осталось только пояснить некоторые ключевые слова используемые в объявлениях.
+
+Ключевое слово \mintinline{cpp}{static} в этом контексте означает, что это объявляется метод класса и вызывать его надо будет через \mintinline{cpp}{<Класс>::<Метод>}.
+
+
+\subhead{Виртуальные методы}
+Представим, что у вас есть базовый класс, который хочет, чтобы в дочерних классах была определена какая-то функция. Тогда если объявить её виртуальной (\mintinline{cpp}{virtual}), то её можно будет переопределить в дочерних классах и при её вызове от указателя будет вызываться именно дочерняя функция, а не родительская. Это проявление полиморфизма, и можно привести такой поясняющий пример:
+\begin{minted}{cpp}
+class Parent {
+public:
+    void f() const {
+        std::cout << "Parent::f" << std::endl;
+    }
+    virtual void g() const {
+        std::cout << "Parent::g" << std::endl;
+    }
+};
+class Child: public Parent {
+public:
+    void f() const {
+        std::cout << "Child::f" << std::endl;
+    }
+    void g() const override {
+        std::cout << "Child::g" << std:: endl;
+    }
+};
+
+Child c;
+Parent* p1 = &c;
+p1 -> f();                      // Parent::f
+p1 -> g();                      // Child::g
+Parent& p2 = c;
+p2.f();                         // Parent::f
+p2.g();                         // Child::g
+\end{minted}
+
+При этом слово \mintinline{cpp}{override} опционально, то есть и без него всё будет работать. Но всё же его лучше указывать, ведь так явно понятно что вы делаете переопределение, а компилятор будет ругаться, если переопределять такое вы не могли. Также кроме этих слов ещё используется \mintinline{cpp}{final}, чтобы показать, что дочерним классам нельзя переопределять функцию.
+
+
+\subhead{Приведение типов}
+При реализации методов bst и rbst нам понадобится несколько раз делать приведение типов, для этого придумано много разных способов:
+\begin{itemize}
+    \item \mintinline{cpp}{const_cast} - добавление и удаление константности;
+    \item \mintinline{cpp}{static_cast} - приведение типов, корректность которых проверяется во время компиляции;
+    \item \mintinline{cpp}{dynamic_cast} - приведение типов, можно делать более хитрые преобразование, чем в \mintinline{cpp}{static_cast};
+    \item \mintinline{cpp}{reinterpret_cast} - можно делать совсем странные вещи, например строку (из произвольных символов) в число;
+    \item \mintinline{cpp}{C-style cast} - в каком-то порядке выбирается приведение типов из списка выше;
+\end{itemize}
+
+Нам хватит \mintinline{cpp}{static_cast}, да и в целом его почти всегда достаточно. \mintinline{cpp}{C-style cast} считается плохим синтаксисом и его лучше избегать.
+
+
+\subhead{Неопределённое поведение}
+В текущей реализации есть UB (\mintinline{cpp}{undefined behaviour} - самая не приятная штука в C++) в моменты, когда мы делаем вызовы вида \mintinline{cpp}{nullptr -> split ...}. Но на практике кажется, что функцию вызывать получается и пока не будет разыменовывания нулевого указателя - всё будет работать. Но опять же повторюсь, что это не по стандарту и лучше бы как-то переписать этот фрагмент кода.

@@ -1,0 +1,137 @@
+\coursefooterdate{?.06.2024}\head{\Large Урок 3: Доработка Vector.}
+\label{md2tex3}
+\hyperref[md2texREADME]{К главному описанию}
+
+
+\subhead{Краткий план}
+\begin{enumerate}
+    \item Аккуратная работа с памятью (копирование).
+    \item Конструктор от размера.
+    \item Больше методов: получение размера, удаление из конца; константные методы.
+    \item Сравнение объектов: оператор \mintinline{cpp}{<=>}.
+    \item Обращение по индексу и итераторы: оператор \mintinline{cpp}{[]}, методы \mintinline{cpp}{begin} и \mintinline{cpp}{end}.
+\end{enumerate}
+
+
+\subhead{Мотивация}
+Казалось бы, мы всё уже написали и оно отлично работает. Но вот нет, мы сегодня рассмотрим такие примеры, по которым будет видно наличие ошибок.
+
+\subhead{Копирование}
+Рассмотрим вот такой код:
+\begin{minted}{cpp}
+Vector v1;
+v1.push_back(2);
+v1.push_back(3);
+v1.push_back(5);
+v1.push_back(7);
+cout << v1;             // 2 3 5 7
+Vector v2 = v1;
+cout << "v1: " << v1;   // 2 3 5 7
+cout << "v2: " << v2;   // 2 3 5 7
+v1.push_back(11);
+v2.push_back(13);
+cout << "v1: " << v1;   // 2 3 5 7 13
+cout << "v2: " << v2;   // 2 3 5 7 13
+\end{minted}
+Хмм, кажется что-то не так! 
+
+Придумано много разных способов обойти такие ошибки, мы рассмотрим \mintinline{cpp}{Swap and Copy}. В нём нужно сделать функции \mintinline{cpp}{swap} и \mintinline{cpp}{copy} и потом уже аккуратно реализовать остальные функции через них:
+\begin{minted}{cpp}
+void copy(Vector const& v);
+void swap(Vector& v);
+Vector(Vector const& v);                // конструктор копирования, выражается через copy и swap
+Vector& operator=(Vector const& v);     // оператор присваивания, выражается через copy и swap
+\end{minted}
+
+
+\subhead{Больше конструкторов}
+Представим, что мы хотим сделать новый конструктор от количества элементов, в таком случае нам нужен:
+\begin{minted}{cpp}
+Vector(size_t size = 0);
+\end{minted}
+Где параметр по умолчанию нужно указывать в заголовочном файле, но не нужно указывать в файле с кодом.
+
+Но теперь внимание, "незаметная" разница, у нас будут работать оба варианта:
+\begin{minted}{cpp}
+Vector v3(2);       // круглые скобки
+Vector v4 = 5;      // присваивание
+\end{minted}
+
+Второй синтаксис какой-то странный, лучше его явно запретить, для этого придумали слово \mintinline{cpp}{explicit} (запретить неявные преобразования):
+\begin{minted}{cpp}
+explicit Vector(size_t size = 0);
+\end{minted}
+
+
+\subhead{Больше методов}
+Предположим, что нам понадобились методы, говорящие размер вектора, тогда понятно, что хочется написать:
+
+\begin{minted}{cpp}
+size_t Vector::size() {
+    return cur_size;
+}
+\end{minted}
+
+Но, представим, что кто-то захотел написать такой код:
+
+\begin{minted}{cpp}
+const Vector v3(v2);
+cout << "v3: " << v3;
+cout << v3.size() << "\n";
+\end{minted}
+
+В целом все хорошо, понятно чего хотел автор и видно, что константу изменять он не собирался. Но такой код не скомпилируется, ведь метод \mintinline{cpp}{size} не помечен как константный. Чтобы это работало нужно написать:
+\begin{minted}{cpp}
+size_t Vector::size() const {
+    return cur_size;
+}
+\end{minted}
+
+Аналогично константными должны быть \mintinline{cpp}{get_back} и \mintinline{cpp}{capacity}.
+
+Теперь реализуем операцию удаления из конца вектора: удаляем (уменьшаем \mintinline{cpp}{cur_size}) и если получилось, что \mintinline{cpp}{cur_size * 4 < cur_capacity}, то выделяем заново память размера \mintinline{cpp}{cur_size * 2} и копируем туда данные. Почему константы выбраны именно так, мы поговорим на следующем занятии.
+
+
+\subhead{Сравнение объектов}
+В старых стандартах для определения сравнения между объектами, нужно было перегружать все операторы вручную (на самом деле можно написать только оператор \mintinline{cpp}{<} и остальные выразить через него, можете на досуге подумать как именно). В новом же стандарте появился оператор \mintinline{cpp}{<=>}, и можно определить его, оператор \mintinline{cpp}{==} и остальные операторы получатся сами.
+
+Для этого определяем операторы:
+
+\begin{minted}{cpp}
+std::strong_ordering operator<=>(Vector const& other) const;
+bool operator==(Vector const& other) const;
+\end{minted}
+
+Внутри первого можно пользоваться операторами \mintinline{cpp}{<=>} для встроенных типов, или возвращать что-то из списка: \mintinline{cpp}{less} (левое меньше), \mintinline{cpp}{greater} (левое больше), \mintinline{cpp}{equal} (равны). Математики придумали не только привычные по жизни порядки \mintinline{cpp}{std::strong_ordering}, но и некоторые другие, о них можете почитать сами в свободное время.
+
+Функцию равенства можно определять как-то по умному (именно поэтому стандарт заставляет определять её отдельно), но можно и через \mintinline{cpp}{<=>}:
+\begin{minted}{cpp}
+bool Vector::operator==(Vector const& other) const {
+    return (*this <=> other) == std::strong_ordering::equal;
+}
+\end{minted}
+
+
+\subhead{Обращение по индексу и итераторы}
+Ну все же уже давно хотят получать доступ к элементу вектора по произвольному индексу, давайте научимся!
+\begin{minted}{cpp}
+int& operator[](int pos);                   // чтобы смочь присвоить значение по индексу
+int const& operator[](int pos) const;       // чтобы получить значение по индексу на чтение
+\end{minted}
+
+Познакомимся со способом сокращения не удобных названий типов:
+\begin{minted}{cpp}
+using iterator = int*;                      // теперь вместо int* можно писать iterator
+using const_iterator = const int*;          // теперь вместо const int* можно писать const_iterator
+\end{minted}
+
+А теперь мы готовы определить функции \mintinline{cpp}{begin} и \mintinline{cpp}{end}, чтобы по нашему вектору можно было делать \mintinline{cpp}{range-based for}:
+\begin{minted}{cpp}
+iterator begin();                           // возвращаем data
+iterator end();                             // возвращаем data + cur_size - указатель на
+                                            // элемент следующий после конца
+const_iterator begin() const;
+const_iterator end() const;
+\end{minted}
+
+Теперь оператор вывода можно реализовать без использования \mintinline{cpp}{friend}!
