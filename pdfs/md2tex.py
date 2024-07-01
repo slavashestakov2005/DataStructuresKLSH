@@ -37,7 +37,7 @@ class MdParser:
     def inline_elements(self, text: str):
         # image
         pattern = '\!\[(?P<text>.*?)\]\((?P<file>.*?)\)'
-        repl = r'\\includegraphics[scale=0.4]{\g<file>}'
+        repl = r'\\includegraphics[scale=0.4]{lessons/\g<file>}'
         text = re.sub(pattern, repl, text)
         # inline code
         pattern = '`(?P<code>.*?)`'
@@ -147,7 +147,7 @@ class TexWriter:
                     f.write(part[1])
                 elif part[0] == MdElements.h1:
                     if print_footer:
-                        f.write('\coursefooterdate{?.06.2024}')
+                        f.write('\coursefooterdate{?.06.2024}\n')
                     f.write('\\head{{\Large {}}}\n'.format(part[1]))
                     f.write(label)
                 elif part[0] == MdElements.h2:

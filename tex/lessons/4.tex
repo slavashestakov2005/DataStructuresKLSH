@@ -1,4 +1,5 @@
-\coursefooterdate{?.06.2024}\head{\Large Урок 4: Шаблоны, наследование и структуры на основе Vector.}
+\coursefooterdate{?.06.2024}
+\head{\Large Урок 4: Шаблоны, наследование и структуры на основе Vector.}
 \label{md2tex4}
 \hyperref[md2texREADME]{К главному описанию}
 
@@ -46,7 +47,7 @@ class Child : private Parent;
 \end{minted}
 Если не указать модификатор, то по умолчанию используется \mintinline{cpp}{private} (а для \mintinline{cpp}{struct} используется \mintinline{cpp}{public}). Общая схема того, как наследуются поля:
 
-\includegraphics[scale=0.4]{4-inheritance.png}
+\includegraphics[scale=0.4]{lessons/4-inheritance.png}
 
 Когда в \mintinline{cpp}{Child} мы хотим использовать метод \mintinline{cpp}{method} унаследованный из \mintinline{cpp}{Parent}, то его можно вызвать через \mintinline{cpp}{Parent::method}.
 

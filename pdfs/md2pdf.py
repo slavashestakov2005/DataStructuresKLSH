@@ -22,9 +22,9 @@ other_files = [file_name for file_name in lessons_files if file_name[-3:] != '.m
 
 os.chdir("../tex")
 for md_file in md_files:
-    convert_file('../lessons/' + md_file, md_file.replace('.md', '.tex'))
+    convert_file('../lessons/' + md_file, 'lessons/' + md_file.replace('.md', '.tex'))
 for other_file in other_files:
-    shutil.copyfile('../lessons/' + other_file, other_file)
+    shutil.copyfile('../lessons/' + other_file, 'lessons/' + other_file)
 
 with open('main.tex', 'w', encoding='UTF-8') as f:
     f.write(r'''\documentclass[10pt,a4paper]{article}
@@ -54,7 +54,7 @@ with open('main.tex', 'w', encoding='UTF-8') as f:
 
     md_lessons = sorted(int(file_name[:-3]) for file_name in md_files)
     for lesson in md_lessons:
-        f.write('\include{{{}}}\n'.format(lesson))
+        f.write('\include{{lessons/{}}}\n'.format(lesson))
     f.write('\end{document}\n')
 
-os.system('pdflatex -synctex=1 -interaction=nonstopmode --shell-escape -output-directory=_build main.tex & copy "_build\main.pdf" "..\pdfs\lessons.pdf"')
+os.system('pdflatex -synctex=1 -interaction=nonstopmode --shell-escape -output-directory="..\\build_tex" main.tex & copy "..\\build_tex\\main.pdf" "..\pdfs\lessons.pdf"')

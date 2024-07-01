@@ -1,3 +1,10 @@
 {
-    "C_Cpp_Runner.msvcBatchPath": ""
+    "emeraldwalk.runonsave": {
+		"commands": [
+			{
+				"match": "\\.cpp$",
+				"cmd": ".vscode\\compile_cpp.bat ${file}"
+			}
+		]
+	}
 }
