@@ -45,12 +45,24 @@ class MdParser:
         text = re.sub(pattern, repl, text)
         # md href
         pattern = '\[(?P<text>.*?)\]\(.*?\/(?P<file>.*?)\.md\)'
-        repl = r'\\hyperref[md2tex\g<file>]{\g<text>}'
+        repl = r'\\hyperref[md2tex\g<file>]{\\color{cyan}{\g<text>}}'
         text = re.sub(pattern, repl, text)
         # outside href
         pattern = '\[(?P<text>.*?)\]\((?P<url>.*?)\)'
-        repl = r'\\href[\g<url>]{\g<text>}'
+        repl = r'\\href{\g<url>}{\\color{blue}{\g<text>}}'
         text = re.sub(pattern, repl, text)
+        # italic + bold
+        pattern = '\*\*\*(?P<text>[^`]*?)\*\*\*'
+        repl = r'\\textbf{\\textit{\g<text>}}'
+        text = re.sub(pattern, repl, text)
+        # bold
+        pattern = '\*\*(?P<text>[^`]*?)\*\*'
+        repl = r'\\textbf{\g<text>}'
+        text = re.sub(pattern, repl, text)
+        # italic
+        pattern = '\*(?P<text>[^`]*?)\*'
+        repl = r'\\textit{\g<text>}'
+        text = re.sub(pattern, repl, text)        
         return text
 
     def parse(self):
@@ -147,7 +159,7 @@ class TexWriter:
                     f.write(part[1])
                 elif part[0] == MdElements.h1:
                     if print_footer:
-                        f.write('\coursefooterdate{?.06.2024}\n')
+                        f.write('\coursefooterdate{17.06.2024 -- 06.07.2024}\n')
                     f.write('\\head{{\Large {}}}\n'.format(part[1]))
                     f.write(label)
                 elif part[0] == MdElements.h2:

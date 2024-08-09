@@ -42,6 +42,7 @@ with open('main.tex', 'w', encoding='UTF-8') as f:
 
 \coursefooterinfo{Описание}
 \section{\Large Описание}
+\include{about}
 \newpage
 
 ''')
@@ -55,6 +56,7 @@ with open('main.tex', 'w', encoding='UTF-8') as f:
     md_lessons = sorted(int(file_name[:-3]) for file_name in md_files)
     for lesson in md_lessons:
         f.write('\include{{lessons/{}}}\n'.format(lesson))
+    f.write('\n\include{final_control}\n\n')
     f.write('\end{document}\n')
 
 os.system('pdflatex -synctex=1 -interaction=nonstopmode --shell-escape -output-directory="..\\build_tex" main.tex & copy "..\\build_tex\\main.pdf" "..\pdfs\lessons.pdf"')

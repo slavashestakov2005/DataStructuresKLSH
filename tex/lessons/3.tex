@@ -1,7 +1,7 @@
-\coursefooterdate{?.06.2024}
+\coursefooterdate{17.06.2024 -- 06.07.2024}
 \head{\Large Урок 3: Доработка Vector.}
 \label{md2tex3}
-\hyperref[md2texREADME]{К главному описанию}
+\hyperref[md2texREADME]{\color{cyan}{К главному описанию}}
 
 
 \subhead{Краткий план}
@@ -90,7 +90,7 @@ size_t Vector::size() const {
 
 Аналогично константными должны быть \mintinline{cpp}{get_back} и \mintinline{cpp}{capacity}.
 
-Теперь реализуем операцию удаления из конца вектора: удаляем (уменьшаем \mintinline{cpp}{cur_size}) и если получилось, что \mintinline{cpp}{cur_size * 4 < cur_capacity}, то выделяем заново память размера \mintinline{cpp}{cur_size * 2} и копируем туда данные. Почему константы выбраны именно так, мы поговорим на следующем занятии.
+Теперь реализуем операцию удаления из конца вектора: удаляем (уменьшаем \mintinline{cpp}{cur_size}) и если получилось, что \mintinline{cpp}{4cur_size < cur_capacity}, то выделяем заново память размера \mintinline{cpp}{2cur_size} и копируем туда данные. Почему константы выбраны именно так, мы поговорим на следующем занятии.
 
 
 \subhead{Сравнение объектов}
