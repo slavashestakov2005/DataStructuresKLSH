@@ -1,0 +1,70 @@
+\coursefooterdate{17.06.2024 -- 06.07.2024}
+\head{Ответы на загоночную контрольную}
+\def\taskname#1{\underline{\textbf{Задача #1.}}}
+\def\taskArow{ & & \\[21 mm] \hline}
+\def\taskBrow#1{#1 & & \\[25mm] \hline}
+\def\taskCrow{ & \\[15mm] \hline}
+\def\tablehead#1{\textbf{#1}}
+
+
+\taskname{1} Ответьте на перечисленные ниже вопросы и впишите ответы в таблицу.
+
+\begin{itemize}
+    \item Перечислите изученные нами структуры данных;
+    \item Для каждой структуры кратко напишите зачем она нужна;
+    \item Для каждой структуры напишите или нарисуйте как она работает;
+    \item Для каждой структуры напишите список поддерживаемых операций;
+    \item Для каждой операции напишите её асимптотику;
+\end{itemize}
+
+\begin{center}
+    \begin{tabular}{|p{58.5mm}|p{67mm}|p{50mm}|}
+        \hline
+        \tablehead{Структуры и зачем нужна} & \tablehead{Как работает} & \tablehead{Методы и их асимптотика} \\
+        \hline
+        Vector – чтобы последовательно хранить элементы и уметь добавлять и удалять в конце & Выделяем статический массив, если заполнился – увеличиваем в 2 раза, если сжался в 4 – уменьшаем & \mintinline{cpp}{push_back, pop_back}, \mintinline{cpp}{operator[]} – всё за $O(1)$ \\[21 mm] \hline
+        Stack – чтобы хранить последовательные штуки и работать только с последним & Берём Vector и запрещаем часть методов & \mintinline{cpp}{push, top, pop} – всё за $O(1)$ \\[21 mm] \hline
+        Queue – добавлять в конец и удалять из начала & Берём два Stack, добавляем в какой нужно, а если не можем удалить из нужного, то перекладываем & \mintinline{cpp}{push_back, front, pop_front} – всё за $O(1)$ \\[21 mm] \hline
+        Deque – очередь с двумя концами & Аналогично Queue, только перекладываем половину & \mintinline{cpp}{push_back, pop_back}, \mintinline{cpp}{push_front, pop_front} – всё за $O(1)$ \\[21 mm] \hline
+        List – хранить набор элементов с возможностью перебора и добавления по итератору & Храним указатели на следующий и предыдущий элементы & \mintinline{cpp}{insert, erase} – всё за $O(1)$ \\[21 mm] \hline
+        Rbst – хранить дерево поиска и делать случайный merge & Храним указатели на двух детей и при merge делаем рандом согласно размерам частей & \mintinline{cpp}{insert, find, erase} – всё за $O(\log n)$ \\[21 mm] \hline
+        Treap – хранить дерево поиска с ключами и приоритетами & Как rbst, только у вершин есть ещё приоритет и при merge выше та, у которой приоритет больше & \mintinline{cpp}{insert, find, erase} – всё за $O(\log n)$ \\[21 mm] \hline
+        B-tree – хранить дерево поиска с одинаковой глубиной до вершин & У каждой вершины от B до 2B отсортированных детей, при изменении дерева перебалансируем его & \mintinline{cpp}{insert, find, erase} – всё за $O(\log n)$ \\[21 mm] \hline
+    \end{tabular}
+\end{center}
+
+
+\taskname{2} Заполните таблицу про методы доказательства асимптотик.
+
+\begin{center}
+    \begin{tabular}{|p{23mm}|p{90mm}|p{62.5mm}|}
+        \hline
+        \tablehead{Метод доказательства} & \tablehead{Как доказывать} & \tablehead{Где использовали} \\
+        \hline
+        Монетки & Выдать каждому элементу фиксированное количество монеток и тратить их, когда пользуемся элементом & Queue \\[25mm] \hline
+        Потенциалы & Ввести функцию потенциала от структуры и доказать, что $t_i + W_i - W_{i-1} \leq f$, и при этом $0 \leq W_i \leq f$, тогда структура работает за $O(f)$ амортизированно & Vector, Deque \\[25mm] \hline
+    \end{tabular}
+\end{center}
+
+
+\ \\
+
+\ \\
+
+\taskname{3} Заполните таблицу про синтаксис C++.
+
+\begin{center}
+    \begin{tabular}{|p{40mm}|p{140mm}|}
+        \hline
+        \tablehead{Синтаксис} & \tablehead{Зачем нужен} \\
+        \hline
+        \mintinline{cpp}{class} & Объединять вместе поля и методы, хранить объекты \\[15mm] \hline
+        \mintinline{cpp}{namespace} & Объединять классы и функции в области видимости, чтобы избежать коллизий по именам \\[15mm] \hline
+        \mintinline{cpp}{private, public}, \mintinline{cpp}{protected, friend} & Разные модификаторы доступа к данным класса: \mintinline{cpp}{public} – знают все, \mintinline{cpp}{protected} – знают дети, \mintinline{cpp}{private} – никто не знает, \mintinline{cpp}{friend} – прикол C++ чтобы избежать слова private \\[15mm] \hline
+        \mintinline{cpp}{class B : public A} & Наследование нужно чтобы не дублировать код и делать штуки "похожие на родителей" \\[15mm] \hline
+        \mintinline{cpp}{operator+} & Чтобы перегружать операторы, например чтобы работало \mintinline{cpp}{Frac a, b; cout << a + b;} \\[15mm] \hline
+        \mintinline{cpp}{template<typename T>} & Чтобы не дублировать код для разных типов данных \\[15mm] \hline
+        \mintinline{cpp}{using} & Для задания более коротких псевдонимов для типов данных \\[15mm] \hline
+        \mintinline{cpp}{* . ->} & Существуют указатели, и для обращения к данным по ним их нужно в каком-то виде разыменовать \\[15mm] \hline
+    \end{tabular}
+\end{center}
